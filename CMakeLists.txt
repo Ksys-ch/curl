@@ -1013,12 +1013,14 @@ endif(HAVE_FILE_OFFSET_BITS)
 check_type_size("off_t"  SIZEOF_OFF_T)
 set(CMAKE_REQUIRED_FLAGS)
 
-foreach(CURL_TEST
-    HAVE_GLIBC_STRERROR_R
-    HAVE_POSIX_STRERROR_R
-    )
-  curl_internal_test_run(${CURL_TEST})
-endforeach(CURL_TEST)
+if(NOT CMAKE_CROSSCOMPILING)
+  foreach(CURL_TEST
+      HAVE_GLIBC_STRERROR_R
+      HAVE_POSIX_STRERROR_R
+      )
+    curl_internal_test_run(${CURL_TEST})
+  endforeach(CURL_TEST)
+endif()
 
 # Check for reentrant
 foreach(CURL_TEST
