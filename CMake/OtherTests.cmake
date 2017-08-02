@@ -177,22 +177,23 @@ int main(void) {
   return 0;
 }" HAVE_STRUCT_TIMEVAL)
 
-
-include(CheckCSourceRuns)
-# See HAVE_POLL in CMakeLists.txt for why poll is disabled on macOS
-if(NOT APPLE)
-  set(CMAKE_REQUIRED_FLAGS)
-  if(HAVE_SYS_POLL_H)
-    set(CMAKE_REQUIRED_FLAGS "-DHAVE_SYS_POLL_H")
-  endif(HAVE_SYS_POLL_H)
-  check_c_source_runs("
-    #ifdef HAVE_SYS_POLL_H
-    #  include <sys/poll.h>
-    #endif
-    int main(void) {
-      return poll((void *)0, 0, 10 /*ms*/);
-    }" HAVE_POLL_FINE)
-endif()
+if(NOT CMAKE_CROSSCOMPILING)
+  include(CheckCSourceRuns)
+  # See HAVE_POLL in CMakeLists.txt for why poll is disabled on macOS
+  if(NOT APPLE)
+    set(CMAKE_REQUIRED_FLAGS)
+    if(HAVE_SYS_POLL_H)
+      set(CMAKE_REQUIRED_FLAGS "-DHAVE_SYS_POLL_H")
+    endif(HAVE_SYS_POLL_H)
+    check_c_source_runs("
+      #ifdef HAVE_SYS_POLL_H
+      #  include <sys/poll.h>
+      #endif
+      int main(void) {
+        return poll((void *)0, 0, 10 /*ms*/);
+      }" HAVE_POLL_FINE)
+  endif(NOT APPLE)
+endif(NOT CMAKE_CROSSCOMPILING)
 
 set(HAVE_SIG_ATOMIC_T 1)
 set(CMAKE_REQUIRED_FLAGS)
@@ -229,4 +230,3 @@ check_type_size("struct sockaddr_storage" SIZEOF_STRUCT_SOCKADDR_STORAGE)
 if(HAVE_SIZEOF_STRUCT_SOCKADDR_STORAGE)
   set(HAVE_STRUCT_SOCKADDR_STORAGE 1)
 endif(HAVE_SIZEOF_STRUCT_SOCKADDR_STORAGE)
-
