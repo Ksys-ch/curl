@@ -940,14 +940,14 @@ check_symbol_exists(setsockopt     "${CURL_INCLUDES}" HAVE_SETSOCKOPT)
 
 # symbol exists in win32, but function does not.
 check_function_exists(inet_pton HAVE_INET_PTON)
-
-check_symbol_exists(fsetxattr "${CURL_INCLUDES}" HAVE_FSETXATTR)
-if(HAVE_FSETXATTR)
-  foreach(CURL_TEST HAVE_FSETXATTR_5 HAVE_FSETXATTR_6)
-    curl_internal_test_run(${CURL_TEST})
-  endforeach(CURL_TEST)
-endif(HAVE_FSETXATTR)
-
+if(NOT CMAKE_CROSSCOMPILING)
+  check_symbol_exists(fsetxattr "${CURL_INCLUDES}" HAVE_FSETXATTR)
+  if(HAVE_FSETXATTR)
+    foreach(CURL_TEST HAVE_FSETXATTR_5 HAVE_FSETXATTR_6)
+      curl_internal_test_run(${CURL_TEST})
+    endforeach(CURL_TEST)
+  endif(HAVE_FSETXATTR)
+endif()
 # sigaction and sigsetjmp are special. Use special mechanism for
 # detecting those, but only if previous attempt failed.
 if(HAVE_SIGNAL_H)
